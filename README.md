@@ -73,33 +73,35 @@ This AI-powered web application offers:
 
 🏗️ Project Structure
 
-co2\_emissions\_estimator/
+co2_emissions_estimator/
 │
 ├── backend/
-│   ├── emissions\_model.py        # Regression model logic
-│   ├── calculator.py             # Main calculator logic
-│   ├── emission\_factors.py       # Static CO₂ coefficients
-│   └── data\_preprocessing.py     # Dataset cleaning & model training
+│   ├── emissions_model.py      # Regression model logic
+│   ├── calculator.py           # Main calculator logic
+│   ├── emission_factors.py     # Static CO₂ coefficients
+│   └── data_preprocessing.py   # Dataset cleaning & model training
 │
 ├── frontend/
-│   ├── app.py                    # Streamlit UI logic
-│   ├── visuals.py                # Emissions charting
-│   └── tips.py                   # Tips based on input
+│   ├── app.py                  # Streamlit UI logic
+│   ├── visuals.py              # Emissions charting
+│   └── tips.py                 # Tips based on input
 │
 ├── models/
-│   └── emissions\_regressor.pkl   # Trained ML model
+│   └── emissions_regressor.pkl # Trained ML model
 │
 ├── data/
-│   ├── ghg\_factors.csv           # Raw emission data
-│   └── cleaned\_data.csv          # Processed dataset
+│   ├── ghg_factors.csv         # Raw emission data
+│   └── cleaned_data.csv        # Processed dataset
 │
 ├── assets/
-│   ├── logo.png                  # Branding
-│   └── icons/                    # Icons for UI (optional)
+│   ├── logo.png                # Branding
+│   └── icons/                  # Icons for UI (optional)
 │
-├── requirements.txt              # Dependencies
-├── README.md                     # You are here!
-└── run\_app.py                    # App entry point
+├── requirements.txt            # Dependencies
+├── README.md                   # You are here!
+└── run_app.py                  # App entry point
+
+
 
 ⚙️ Installation & Running Locally
 
