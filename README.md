@@ -71,6 +71,9 @@ This AI-powered web application offers:
 | Deployment          | Streamlit Cloud (default) |
 | Dataset             | GHG Conversion Factors (UK Government) |
 
+# Project Structure
+
+```
 co2_emissions_estimator/
 │
 ├── backend/
@@ -98,7 +101,7 @@ co2_emissions_estimator/
 ├── requirements.txt            # Dependencies
 ├── README.md                   # You are here!
 └── run_app.py                  # App entry point
-
+```
 
 ⚙️ Installation & Running Locally
 
