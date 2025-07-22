@@ -300,3 +300,56 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+# app.py
+import streamlit as st
+import yaml
+from yaml.loader import SafeLoader
+import streamlit_authenticator as stauth
+
+# Load config
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+auth = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config.get('preauthorized')
+)
+
+st.set_page_config(page_title="CO₂ Emissions App", layout="wide")
+
+# Show sign-up and login in sidebar
+with st.sidebar:
+    st.title("Welcome 🌍")
+    name, auth_status, username = auth.login('Login', 'sidebar')
+    if auth_status:
+        auth.logout('Logout', 'sidebar')
+        st.sidebar.success(f"Logged in as {name}")
+        if st.sidebar.button("Register New User"):
+            # Show sign-up form
+            new_username, new_email, new_name = auth.register_user(
+                pre_authorized=True, merge_username_email=True, captcha=False
+            )
+            if new_username:
+                with open('config.yaml', 'w') as file:
+                    yaml.dump(config, file, default_flow_style=False)
+                st.sidebar.success(f"User {new_username} registered! Ask them to log in.")
+
+    elif auth_status is False:
+        st.sidebar.error("Username/password incorrect")
+    else:
+        st.sidebar.warning("Please log in or register")
+
+# Main app content
+if auth_status:
+    st.title("🌿 CO₂ Emissions Estimator")
+    st.write(f"Welcome, **{name}**! Track your carbon footprint here.")
+    # import and call your existing estimation UI here
+    # e.g. calculator(), visuals(), tips()
+else:
+    st.title("Please log in to access CO₂ estimator")
