@@ -145,9 +145,7 @@ streamlit run run_app.py
 
 🚧 Coming Soon:
 
-* [ ] Add CSV export feature for reports
 * [ ] Show global temperature impact based on activity levels
-* [ ] Offer location-based renewable energy suggestions
 * [ ] Compare user emissions with national/regional averages
 * [ ] Multilingual support (Swahili, French, etc.)
 
