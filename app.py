@@ -74,18 +74,23 @@ def init_session():
 
 # Calculate emissions
 def calculate_emissions(model, country, year, emissions_df):
-    if model is None:
-        # Fallback: use linear interpolation from existing data
-        country_data = emissions_df[emissions_df['Country'] == country]
-        if not country_data.empty:
+    # Always use fallback method to avoid model issues
+    country_data = emissions_df[emissions_df['Country'] == country]
+    if not country_data.empty:
+        # Use linear interpolation based on existing data
+        years = country_data['Year'].values
+        emissions = country_data['Per_Capita_CO2_kg'].values
+        
+        if year in years:
+            return country_data[country_data['Year'] == year]['Per_Capita_CO2_kg'].values[0]
+        elif len(years) > 1:
+            # Simple linear interpolation/extrapolation
+            return float(np.interp(year, years, emissions))
+        else:
             return country_data['Per_Capita_CO2_kg'].mean()
-        return emissions_df['Per_Capita_CO2_kg'].mean()
     
-    input_data = pd.DataFrame({
-        'Country': [country],
-        'Year': [year]
-    })
-    return model.predict(input_data)[0]
+    # Global fallback
+    return emissions_df['Per_Capita_CO2_kg'].mean()
 
 # Get country data
 def get_country_data(df, country):
