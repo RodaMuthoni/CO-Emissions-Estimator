@@ -80,6 +80,13 @@ user_data = get_user_input()
 if st.button("Generate My Dashboard"):
     # Send data to the next page (recommendations.py)
     st.session_state['user_data'] = user_data
+    # Navigate to Recommendations page
+    st.session_state.selected_section = 'module'
+    st.session_state.last_module_nav = "🤹‍♂️ Recommendations"
+    st.success("Dashboard generated! Redirecting to Recommendations...")
+    st.balloons()
+    # Force page refresh to navigate
+    st.rerun() if hasattr(st, 'rerun') else st.experimental_rerun()
 
 
 

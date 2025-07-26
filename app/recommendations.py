@@ -172,15 +172,15 @@ if 'user_data' in st.session_state:
         child_emission_per_year = 58.3  # in tons of CO2
 
         # Interactive sliders to adjust the number of children and household members
-        adults_in_household = st.slider("Number of Adults in Household", min_value=1, max_value=10, value=household_size - 1, step=1)
-        children_in_household = st.slider("Number of Children in Household", min_value=0, max_value=5, value=household_size - adults_in_household, step=1)
+        adults_in_household = st.slider("Number of Adults in Household", min_value=1, max_value=10, value=max(1, household_size - 1), step=1)
+        children_in_household = st.slider("Number of Children in Household", min_value=0, max_value=5, value=max(0, household_size - adults_in_household), step=1)
 
         # Calculating the total CO2 emissions for the household based on the number of adults and children
         total_adult_emissions = adults_in_household * adult_emission_per_year
         total_child_emissions = children_in_household * child_emission_per_year
         total_household_emissions = total_adult_emissions + total_child_emissions
 
-        population_reduction = st.slider("Reduce Household Population (Number of People)", min_value=1, max_value=household_size, value=1, step=1)
+        population_reduction = st.slider("Reduce Household Population (Number of People)", min_value=0, max_value=max(household_size, 1), value=0, step=1)
 
         # Simulate reducing the population (either reduce children or adults)
         reduced_household_emissions = (adults_in_household - population_reduction) * adult_emission_per_year + (children_in_household - population_reduction) * child_emission_per_year

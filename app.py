@@ -6,7 +6,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
-from authentication import login_signup
+# Remove authentication import since we're implementing it inline
 
 # Custom CSS
 st.markdown("""
@@ -97,9 +97,82 @@ def get_climate_tips(country, current_emissions, avg_emissions):
     
     return tips
 
+# Main page authentication function
+def main_page_auth():
+    st.title("🔒 Authentication Required")
+    st.write("Please log in or sign up to access the Country CO₂ Emissions Analyzer")
+    
+    auth_mode = st.radio("Choose mode", ["Login", "Sign Up"], horizontal=True)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        username = st.text_input("Username")
+    with col2:
+        password = st.text_input("Password", type="password")
+    
+    # Load users function from authentication module
+    import os
+    import hashlib
+    
+    def hash_password(password):
+        return hashlib.sha256(password.encode()).hexdigest()
+    
+    def load_users():
+        USER_DB = "users.csv"
+        if not os.path.exists(USER_DB):
+            return {}
+        df = pd.read_csv(USER_DB)
+        return dict(zip(df['username'], df['password']))
+    
+    def save_user(username, password_hash):
+        USER_DB = "users.csv"
+        if os.path.exists(USER_DB):
+            df = pd.read_csv(USER_DB)
+            if username in df['username'].values:
+                return False
+            df = pd.concat([df, pd.DataFrame([{'username': username, 'password': password_hash}])], ignore_index=True)
+        else:
+            df = pd.DataFrame([{'username': username, 'password': password_hash}])
+        df.to_csv(USER_DB, index=False)
+        return True
+    
+    users = load_users()
+    
+    if auth_mode == "Login":
+        if st.button("Login", type="primary"):
+            if username in users and users[username] == hash_password(password):
+                st.session_state.authenticated = True
+                st.session_state.username = username
+                st.success(f"Welcome, {username}! Loading analyzer...")
+                st.balloons()
+                return True
+            else:
+                st.error("Invalid credentials")
+    else:
+        if st.button("Sign Up", type="primary"):
+            if username in users:
+                st.error("Username already exists")
+            elif username and password:
+                if save_user(username, hash_password(password)):
+                    st.success("Account created! Please log in.")
+                else:
+                    st.error("Error creating account")
+            else:
+                st.error("Please enter username and password")
+    
+    return False
+
 # Main application
 def main():
-    login_signup()
+    # Check authentication first
+    if not st.session_state.get("authenticated", False):
+        if main_page_auth():
+            # Authentication successful, continue to main app
+            pass
+        else:
+            # Still authenticating, stop here
+            return
+    
     # Load resources
     model, emissions_df, country_list = load_resources()
 
