@@ -23,25 +23,44 @@ st.markdown("""
 def load_resources():
     import os
     
-    # Use absolute path directly
-    base_path = "/home/mike_mitch/PLP Project/AI_for_Software-Engineering/CO-Emissions-Estimator"
+    # Use relative path that works in both local and deployed environments
+    current_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Load CSV
-    csv_path = os.path.join(base_path, "country_emissions.csv")
-    try:
-        emissions_df = pd.read_csv(csv_path)
-    except Exception as e:
-        st.error(f"Could not load data: {e}")
+    # Load CSV - try multiple possible locations
+    csv_paths = [
+        os.path.join(current_dir, "country_emissions.csv"),
+        "country_emissions.csv",
+        os.path.join(current_dir, "..", "country_emissions.csv")
+    ]
+    
+    emissions_df = None
+    for csv_path in csv_paths:
+        try:
+            if os.path.exists(csv_path):
+                emissions_df = pd.read_csv(csv_path)
+                break
+        except Exception as e:
+            continue
+    
+    if emissions_df is None:
+        st.error("Could not load country emissions data. Please ensure country_emissions.csv is in the project directory.")
         return None, None, []
     
     # Load model (optional)
     model = None
-    model_path = os.path.join(base_path, "country_emissions_model.pkl")
-    try:
-        if os.path.exists(model_path):
-            model = joblib.load(model_path)
-    except:
-        pass  # Model is optional
+    model_paths = [
+        os.path.join(current_dir, "country_emissions_model.pkl"),
+        "country_emissions_model.pkl",
+        os.path.join(current_dir, "..", "country_emissions_model.pkl")
+    ]
+    
+    for model_path in model_paths:
+        try:
+            if os.path.exists(model_path):
+                model = joblib.load(model_path)
+                break
+        except:
+            continue
     
     country_list = sorted(emissions_df['Country'].unique())
     return model, emissions_df, country_list
@@ -118,23 +137,46 @@ def main_page_auth():
         return hashlib.sha256(password.encode()).hexdigest()
     
     def load_users():
-        USER_DB = "users.csv"
-        if not os.path.exists(USER_DB):
-            return {}
-        df = pd.read_csv(USER_DB)
-        return dict(zip(df['username'], df['password']))
+        # Try multiple locations for users.csv
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        user_db_paths = [
+            "users.csv",
+            os.path.join(current_dir, "users.csv"),
+            os.path.join(current_dir, "..", "users.csv")
+        ]
+        
+        for USER_DB in user_db_paths:
+            if os.path.exists(USER_DB):
+                try:
+                    df = pd.read_csv(USER_DB)
+                    return dict(zip(df['username'], df['password']))
+                except:
+                    continue
+        return {}
     
     def save_user(username, password_hash):
-        USER_DB = "users.csv"
-        if os.path.exists(USER_DB):
-            df = pd.read_csv(USER_DB)
-            if username in df['username'].values:
-                return False
-            df = pd.concat([df, pd.DataFrame([{'username': username, 'password': password_hash}])], ignore_index=True)
-        else:
-            df = pd.DataFrame([{'username': username, 'password': password_hash}])
-        df.to_csv(USER_DB, index=False)
-        return True
+        # Use the first available location for users.csv
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        user_db_paths = [
+            "users.csv",
+            os.path.join(current_dir, "users.csv")
+        ]
+        
+        USER_DB = user_db_paths[0]  # Default to current directory
+        
+        try:
+            if os.path.exists(USER_DB):
+                df = pd.read_csv(USER_DB)
+                if username in df['username'].values:
+                    return False
+                df = pd.concat([df, pd.DataFrame([{'username': username, 'password': password_hash}])], ignore_index=True)
+            else:
+                df = pd.DataFrame([{'username': username, 'password': password_hash}])
+            df.to_csv(USER_DB, index=False)
+            return True
+        except Exception as e:
+            st.error(f"Error saving user data: {e}")
+            return False
     
     users = load_users()
     
@@ -175,9 +217,13 @@ def main():
     
     # Load resources
     model, emissions_df, country_list = load_resources()
-
     
- # Initialize session
+    # If data loading failed, show error and return
+    if emissions_df is None or len(country_list) == 0:
+        st.error("Unable to load emissions data. Please check if the data files are available.")
+        return
+
+    # Initialize session
     init_session()
     
     # Header
@@ -205,16 +251,20 @@ def main():
     with col1:
         # Use the first country as default if United States is not found
         default_index = 0
-        if "United States" in country_list:
-            default_index = country_list.index("United States")
-        elif "USA" in country_list:
-            default_index = country_list.index("USA")
-        
-        selected_country = st.selectbox(
-            "Select Country", 
-            country_list,
-            index=default_index
-        )
+        if len(country_list) > 0:
+            if "United States" in country_list:
+                default_index = country_list.index("United States")
+            elif "USA" in country_list:
+                default_index = country_list.index("USA")
+            
+            selected_country = st.selectbox(
+                "Select Country", 
+                country_list,
+                index=default_index
+            )
+        else:
+            st.error("No country data available")
+            return
     with col2:
         analysis_year = st.slider(
             "Analysis Year", 
