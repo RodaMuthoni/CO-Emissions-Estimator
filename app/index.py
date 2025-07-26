@@ -2,7 +2,7 @@ import streamlit as st
 
 # Set page configuration
 st.set_page_config(
-    page_title="GreenShift - Carbon Footprint Tracker",
+    page_title="EcoSafari - Carbon Footprint Tracker",
     page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"

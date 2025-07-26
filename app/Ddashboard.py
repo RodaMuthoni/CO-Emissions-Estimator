@@ -13,8 +13,8 @@ def dummyDashboard():
     df_mock = pd.DataFrame(mock_data)
 
     # Section Title
-    st.markdown("### 🌿 GreenShift Dashboard Preview")
-    st.write("Here's a sneak peek of the insights you'll gain from tracking your carbon footprint with GreenShift.")
+    st.markdown("### 🌿 EcoSafari Dashboard Preview")
+    st.write("Here's a sneak peek of the insights you'll gain from tracking your carbon footprint with EcoSafari.")
 
     # Dashboard columns
     col1, col2, col3 = st.columns(3)
@@ -24,7 +24,7 @@ def dummyDashboard():
         st.markdown("#### 📊 Current Carbon Footprint")
         st.bar_chart(df_mock.set_index("Category")["Current Footprint (kg CO2)"])
 
-    # Column 2: Projected Reduction with GreenShift - Area Chart
+    # Column 2: Projected Reduction with EcoSafari - Area Chart
     with col2:
         st.markdown("#### 📉 Projected Reduction")
         st.area_chart(df_mock.set_index("Category")["Projected Reduction (kg CO2)"])
@@ -40,7 +40,7 @@ def dummyDashboard():
     st.markdown("### 📝 Sample Insights and Recommendations")
     st.write(
         """
-        With GreenShift, you'll receive personalized insights like:
+        With EcoSafari, you'll receive personalized insights like:
         
         - **Transportation**: "Switching to public transport or carpooling could reduce your carbon footprint by 20%!"
         - **Energy Usage**: "Turning off devices when not in use can save up to 30 kg CO2 monthly."

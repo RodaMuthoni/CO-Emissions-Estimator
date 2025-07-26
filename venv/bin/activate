@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/mike_mitch/PLP Project/AI_for_Software-Engineering/GreenShift-Carbon_Footprint_Tracker/venv"
+VIRTUAL_ENV="/home/mike_mitch/PLP Project/AI_for_Software-Engineering/EcoSafari-Carbon_Footprint_Tracker/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

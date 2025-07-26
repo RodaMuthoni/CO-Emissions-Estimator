@@ -2,23 +2,57 @@
 import streamlit as st
 
 @st.cache_data
-def circular_image(image_path, width=140):
-    # Display the image using Streamlit with error handling
-    try:
-        st.image(image_path, width=width, use_container_width=False)
-    except:
-        st.markdown("👤")  # Fallback emoji
+def circular_image(image_name, width=140):
+    # Create a styled placeholder with the person's initials or role
+    placeholders = {
+        "mike.jpg": "👨‍💻 MR",
+        "val.jpeg": "👨‍💼 SV", 
+        "roda.png": "👩‍🔬 RM",
+        "rose.jpeg": "👩‍💻 RO",
+        "nick.png": "👨‍🔧 NO"
+    }
+    
+    placeholder = placeholders.get(image_name.split("/")[-1], "👤")
+    
+    # Create a styled placeholder
+    st.markdown(f"""
+    <div style="
+        width: {width}px;
+        height: {width}px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 10px auto;
+        text-align: center;
+    ">
+        {placeholder}
+    </div>
+    """, unsafe_allow_html=True)
 
-# Handle logo with error handling
-try:
-    st.logo("Images/team.png")
-except:
-    pass
-
-try:
-    st.image("Images/team.png",width=145)
-except:
-    st.markdown("👥 **Team Photo**")
+# Team header with styled placeholder
+st.markdown("""
+<div style="
+    width: 145px;
+    height: 100px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 10px auto;
+    text-align: center;
+">
+    👥 TEAM
+</div>
+""", unsafe_allow_html=True)
 st.title("Meet the Team Behind the Suite")
 st.write("""
     This project was developed by a team of dedicated students from Power Learn Project, with a passion for creating tools that improve academic experiences.
@@ -58,7 +92,7 @@ st.write("📧 Email: sabulkongvalentine@gmail.com")
 st.write("GitHub: https://github.com/sabulkong")
 st.write("LinkedIn: https://www.linkedin.com/in/valentine-jerono-1b8802359/")
 
-# Developer 3
+# Developer 3  app/Images
 circular_image("Images/roda.png")
 st.subheader("Roda Muthoni")
 st.write("Role: Data Scientist | Specializes in data analysis, visualization, and model validation.")

@@ -8,7 +8,7 @@ try:
     st.image(logo, width=175)
 except:
     st.markdown("🌍")  # Use emoji as fallback
-st.title("🌍 GreenShift - Carbon Footprint Tracker")
+st.title("🌍 EcoSafari - Carbon Footprint Tracker")
 st.subheader("Empowering Sustainable Choices 🌱")
 st.markdown("**Take the first step towards understanding and reducing your carbon footprint.**")
 
@@ -23,7 +23,7 @@ except:
 st.markdown("---")
 
 # Overview Section with Columns
-st.markdown("### 🌟 Key Features of GreenShift")
+st.markdown("### 🌟 Key Features of EcoSafari")
 col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("#### 🌍 Track Your Carbon Footprint")
@@ -37,7 +37,7 @@ with col3:
 
 # Functional Tabs for Navigating Features
 st.markdown("---")
-st.markdown("### 🔍 Explore GreenShift")
+st.markdown("### 🔍 Explore EcoSafari")
 tabs = st.tabs(["🚶 Track Footprint", "📈 Climate Insights", "💼 Recommendations"])
 
 with tabs[0]:
@@ -68,8 +68,8 @@ with st.expander("What is Climate Change?", expanded=False):
     st.write("""Climate change is a long-term change in the average weather patterns that have come to define Earth’s local, regional and global climates. These changes have a broad range of observed effects that are synonymous with the term.
 
 Changes observed in Earth’s climate since the mid-20th century are driven by human activities, particularly fossil fuel burning, which increases heat-trapping greenhouse gas levels in Earth’s atmosphere, raising Earth’s average surface temperature. Natural processes, which have been overwhelmed by human activities, can also contribute to climate change, including internal variability (e.g., cyclical ocean patterns like El Niño, La Niña and the Pacific Decadal Oscillation) and external forcings (e.g., volcanic activity, changes in the Sun’s energy output, variations in Earth’s orbit).""")
-with st.expander("What is GreenShift?", expanded=False):
-    st.write("🌎 GreenShift is a data-driven web application designed to help individuals track, understand, and reduce their carbon footprint. In today’s world, personal actions play a significant role in addressing climate change. GreenShift provides an easy way to quantify the environmental impact of daily activities and encourages users to adopt more sustainable habits.")
+with st.expander("What is EcoSafari?", expanded=False):
+    st.write("🌎 EcoSafari is a data-driven web application designed to help individuals track, understand, and reduce their carbon footprint. In today’s world, personal actions play a significant role in addressing climate change. EcoSafari provides an easy way to quantify the environmental impact of daily activities and encourages users to adopt more sustainable habits.")
 with st.expander("How do I track my carbon footprint?", expanded=False):
     st.write("Simply log your daily activities related to energy, transport, and diet to get an accurate measurement.")
 with st.expander("Where does the climate data come from?", expanded=False):

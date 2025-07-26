@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/home/mike_mitch/PLP Project/AI_for_Software-Engineering/GreenShift-Carbon_Footprint_Tracker/venv/bin/python3" "$0" "$@"
+'''exec' "/home/mike_mitch/PLP Project/AI_for_Software-Engineering/EcoSafari-Carbon_Footprint_Tracker/venv/bin/python3" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re
