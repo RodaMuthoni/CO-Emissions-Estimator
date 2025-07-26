@@ -66,9 +66,9 @@ st.markdown("""
 As a data enthusiast, I enjoy transforming raw datasets into powerful insights. I'm skilled in exploratory data analysis, model tuning, and generating visual reports that tell meaningful stories. I ensure that the numbers behind our app are robust and accurate.
 """)
 st.write("Reach out through:")
-st.write("📧 Email: ")
-st.write("GitHub: https://github.com/dev3")
-st.write("LinkedIn: https://www.linkedin.com/in/dev3")
+st.write("📧 Email: nyamairodes@gmail.com")
+st.write("GitHub: https://github.com/RodaMuthoni")
+st.write("LinkedIn: https://www.linkedin.com/in/roda-nyamai/")
 
 # Developer 4
 circular_image("Images/rose.jpeg")
