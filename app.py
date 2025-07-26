@@ -246,6 +246,41 @@ def main():
             ax2.set_title("Per Capita Emissions Comparison (Latest Available Data)")
             ax2.set_ylabel("kg CO₂ per capita")
             ax2.legend()
+            plt.xticks(rotation=45)
+            st.pyplot(fig2)
+            
+            # Display comparison table
+            st.dataframe(comparison_df, use_container_width=True)
+    
+    # Climate action recommendations
+    if not country_data.empty:
+        st.header("🌱 Climate Action Recommendations")
+        
+        # Get reduction targets
+        targets = get_reduction_targets(current_emissions)
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Emission Reduction Targets")
+            for target, value in targets.items():
+                reduction_pct = ((current_emissions - value) / current_emissions) * 100
+                st.metric(target, f"{value:.1f} kg CO₂", f"-{reduction_pct:.0f}%")
+        
+        with col2:
+            st.subheader("Climate Tips")
+            tips = get_climate_tips(selected_country, current_emissions, global_avg)
+            for tip in tips:
+                st.markdown(f"<div class='tip-box'>{tip}</div>", unsafe_allow_html=True)
+    
+    # Footer
+    st.markdown("<div class='footer'>", unsafe_allow_html=True)
+    st.markdown("**Supporting SDG 13: Climate Action** | Data-driven insights for sustainable development")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+if __name__ == "__main__":
+    main()
+            ax2.set_ylabel("kg CO₂ per capita")
+            ax2.legend()
             st.pyplot(fig2)
             
             # Display comparison table

@@ -68,34 +68,37 @@ import os
 sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+# Get current directory path
+current_dir = os.path.dirname(__file__)
+
 # Page routing
 if page == "🏠 Home":
     try:
-        exec(open("home.py").read())
+        exec(open(os.path.join(current_dir, "home.py")).read())
     except Exception as e:
         st.error(f"Error loading Home: {e}")
         
 elif page == "👨‍💻 Developers | Team":
     try:
-        exec(open("developers.py").read())
+        exec(open(os.path.join(current_dir, "developers.py")).read())
     except Exception as e:
         st.error(f"Error loading Developers: {e}")
         
 elif page == "🐾 Calculate My Carbon Footprint":
     try:
-        exec(open("user_input.py").read())
+        exec(open(os.path.join(current_dir, "user_input.py")).read())
     except Exception as e:
         st.error(f"Error loading Carbon Footprint Calculator: {e}")
         
 elif page == "🤹‍♂️ Recommendations":
     try:
-        exec(open("recommendations.py").read())
+        exec(open(os.path.join(current_dir, "recommendations.py")).read())
     except Exception as e:
         st.error(f"Error loading Recommendations: {e}")
         
 elif page == "🏭 Global Carbon Emission":
     try:
-        exec(open("Global_Climate.py").read())
+        exec(open(os.path.join(current_dir, "Global_Climate.py")).read())
     except Exception as e:
         st.error(f"Error loading Global Climate: {e}")
         
@@ -110,6 +113,6 @@ elif page == "🌍 Country CO₂ Analyzer":
         
 elif page == "🌱 Sustainable Practices":
     try:
-        exec(open("sustainability.py").read())
+        exec(open(os.path.join(current_dir, "sustainability.py")).read())
     except Exception as e:
         st.error(f"Error loading Sustainability: {e}")
