@@ -203,10 +203,17 @@ def main():
     # Main analysis section
     col1, col2 = st.columns(2)
     with col1:
+        # Use the first country as default if United States is not found
+        default_index = 0
+        if "United States" in country_list:
+            default_index = country_list.index("United States")
+        elif "USA" in country_list:
+            default_index = country_list.index("USA")
+        
         selected_country = st.selectbox(
             "Select Country", 
             country_list,
-            index=country_list.index("United States")
+            index=default_index
         )
     with col2:
         analysis_year = st.slider(
@@ -283,10 +290,18 @@ def main():
     
     # Comparison section
     st.header("🌐 Country Comparison")
+    # Set default comparison countries that exist in the data
+    default_compare = []
+    for country in ["China", "India", "Germany", "Brazil", "Canada", "Australia"]:
+        if country in country_list:
+            default_compare.append(country)
+        if len(default_compare) >= 3:
+            break
+    
     compare_countries = st.multiselect(
         "Compare with other countries", 
         country_list,
-        default=["China", "India", "Germany"]
+        default=default_compare
     )
     
     if compare_countries:
