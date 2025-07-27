@@ -71,6 +71,40 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 # Get current directory path
 current_dir = os.path.dirname(__file__)
 
+# Add AI Chat Widget at bottom of sidebar
+st.sidebar.markdown("---")
+st.sidebar.markdown('<div style="text-align:center;"><div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#00c851,#007e33);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;color:white;">🤖</div></div>', unsafe_allow_html=True)
+
+if 'chat_expanded' not in st.session_state:
+    st.session_state.chat_expanded = False
+if 'sidebar_messages' not in st.session_state:
+    st.session_state.sidebar_messages = []
+
+if st.sidebar.button("💬 Climate AI Chat"):
+    st.session_state.chat_expanded = not st.session_state.chat_expanded
+
+if st.session_state.chat_expanded:
+    user_input = st.sidebar.text_input("Ask about climate:", placeholder="How to reduce CO2?")
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        if st.button("🔍 Ask") and user_input:
+            climate_keywords = ['climate', 'carbon', 'emission', 'greenhouse', 'sustainability', 'renewable', 'environment']
+            if any(keyword in user_input.lower() for keyword in climate_keywords):
+                response = "Reduce emissions by using renewable energy, sustainable transport, and minimizing waste. Support climate action (SDG 13)!"
+                st.session_state.sidebar_messages.append(("user", user_input))
+                st.session_state.sidebar_messages.append(("ai", response))
+            else:
+                st.sidebar.warning("Climate topics only!")
+    with col2:
+        if st.button("🗑️ Clear"):
+            st.session_state.sidebar_messages = []
+    
+    for msg_type, message in st.session_state.sidebar_messages[-2:]:
+        if msg_type == "user":
+            st.sidebar.markdown(f"**You:** {message[:50]}...")
+        else:
+            st.sidebar.markdown(f"**🤖:** {message[:50]}...")
+
 # Page routing
 if page == "🏠 Home":
     try:

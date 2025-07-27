@@ -48,6 +48,14 @@ This AI-powered web application offers:
 - Comparison with average national emissions
 - Personalized emission reduction tips
 
+✅ **NEW: Climate AI Chat Widget**
+- Floating circular chat widget in sidebar
+- Real-time climate information via Google Search API
+- Answers climate-related questions with current data
+- Built-in knowledge base for offline use
+- Attractive hover effects and appealing design
+- Supports climate education and awareness
+
 ✅ Deployment
 - **No login or database** required for MVP
 - Hosted via **Streamlit Cloud** (or Render/Railway)
@@ -59,6 +67,8 @@ This AI-powered web application offers:
 - **NGO's and companies**: Use in school/community climate workshops to teach carbon awareness
 - **Governments**: Prototype public-facing carbon calculators
 - **Individuals**: Track personal footprint and get tips to reduce it
+- **Educators**: Interactive climate Q&A for students and communities
+- **Researchers**: Quick access to current climate information and data
 
 🔧 Technical Stack
 
@@ -85,7 +95,8 @@ co2_emissions_estimator/
 ├── frontend/
 │   ├── app.py                  # Streamlit UI logic
 │   ├── visuals.py              # Emissions charting
-│   └── tips.py                 # Tips based on input
+│   ├── tips.py                 # Tips based on input
+│   └── climate_ai_agent.py     # AI assistant with Google Search API
 │
 ├── models/
 │   └── emissions_regressor.pkl # Trained ML model
@@ -128,7 +139,13 @@ pip install -r requirements.txt
 4. **Run the app**
 
 ```bash
-streamlit run index.py
+streamlit run app/index.py
+```
+
+5. **Test the AI Assistant** (optional)
+
+```bash
+python simple_test.py
 ```
 
 📊 Screenshots (Optional)
@@ -148,12 +165,21 @@ streamlit run index.py
 * [ ] Show global temperature impact based on activity levels
 * [ ] Compare user emissions with national/regional averages
 * [ ] Multilingual support (Swahili, French, etc.)
+* [ ] Enhanced AI responses with more data sources
+* [ ] Voice interaction for AI assistant
+* [ ] Integration with climate APIs for real-time data
 
 💡 Inspiration
 
 * UK Government GHG Conversion Factors
 * Streamlit, scikit-learn, and open climate APIs
 * UN’s Sustainable Development Goals
+
+📚 Documentation
+
+- **[Climate AI Quick Start](CLIMATE_AI_QUICKSTART.md)** - Get started with the AI chat widget
+- **[Google API Setup](GOOGLE_API_SETUP.md)** - Configure live search functionality
+- **[Test Script](simple_test.py)** - Verify AI agent functionality
 
 ⭐️ Support the Project
 
