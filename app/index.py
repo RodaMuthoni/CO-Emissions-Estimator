@@ -72,6 +72,71 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 # Get current directory path
 current_dir = os.path.dirname(__file__)
 
+# Add floating Climate AI chat button
+st.markdown("""
+<style>
+.floating-chat-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00c851, #007e33);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+}
+.floating-chat-btn:hover {
+    transform: scale(1.1);
+    width: 120px;
+    border-radius: 30px;
+}
+.chat-icon {
+    font-size: 24px;
+    color: white;
+    transition: opacity 0.3s ease;
+}
+.chat-text {
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+    opacity: 0;
+    margin-left: 8px;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+.floating-chat-btn:hover .chat-text {
+    opacity: 1;
+}
+.floating-chat-btn:hover .chat-icon {
+    opacity: 0.8;
+}
+</style>
+<div class="floating-chat-btn" id="chatBtn">
+    <span class="chat-icon">🤖</span>
+    <span class="chat-text">Chat Me</span>
+</div>
+<script>
+document.getElementById('chatBtn').addEventListener('click', function() {
+    // Find and click the Climate AI Chat radio button
+    const radios = document.querySelectorAll('input[type="radio"]');
+    for (let radio of radios) {
+        if (radio.value === '🤖 Climate AI Chat') {
+            radio.click();
+            break;
+        }
+    }
+});
+</script>
+""", unsafe_allow_html=True)
+
 
 
 # Page routing
@@ -125,3 +190,4 @@ elif page == "🤖 Climate AI Chat":
         exec(open(os.path.join(current_dir, "climate_chat.py")).read())
     except Exception as e:
         st.error(f"Error loading Climate AI Chat: {e}")
+
