@@ -1,6 +1,8 @@
 import streamlit as st
 import random
 import time
+import openai
+import os
 
 # Initialize session state
 if 'chat_messages' not in st.session_state:
@@ -9,6 +11,8 @@ if 'quiz_mode' not in st.session_state:
     st.session_state.quiz_mode = False
 if 'current_quiz' not in st.session_state:
     st.session_state.current_quiz = None
+if 'api_status' not in st.session_state:
+    st.session_state.api_status = 'checking'
 
 # Climate knowledge base
 CLIMATE_RESPONSES = {
@@ -21,7 +25,8 @@ CLIMATE_RESPONSES = {
     'deforestation': "Deforestation causes 11% of global CO₂ emissions. Forests absorb 2.6 billion tons of CO₂ annually. One mature tree absorbs 48 lbs of CO₂ per year. Amazon rainforest produces 20% of world's oxygen.",
     'ocean acidification': "Oceans absorb 30% of human CO₂ emissions, causing pH to drop by 0.1 units since pre-industrial times. This threatens marine ecosystems, coral reefs, and fisheries that feed 3 billion people.",
     'paris agreement': "Paris Agreement aims to limit global warming to 1.5°C above pre-industrial levels. 196 countries committed to reduce emissions. Current pledges would lead to 2.7°C warming - more action needed.",
-    'carbon neutral': "Carbon neutrality means balancing CO₂ emissions with removal/offsetting. Strategies: reduce emissions first, then offset remaining through reforestation, carbon capture, renewable energy projects."
+    'carbon neutral': "Carbon neutrality means balancing CO₂ emissions with removal/offsetting. Strategies: reduce emissions first, then offset remaining through reforestation, carbon capture, renewable energy projects.",
+    'global warming': "Global warming refers to the long-term increase in Earth's average surface temperature due to human activities. Since the late 1800s, global temperatures have risen by about 1.1°C (2°F). Main causes include burning fossil fuels, deforestation, and industrial processes that release greenhouse gases like CO₂, methane, and nitrous oxide."
 }
 
 SAMPLE_QUESTIONS = [
@@ -39,7 +44,12 @@ SAMPLE_QUESTIONS = [
     "🌱 What are sustainable practices?",
     "🏭 Which industries produce most emissions?",
     "❄️ How is climate change affecting polar ice?",
-    "🌾 How does agriculture contribute to emissions?"
+    "🌾 How does agriculture contribute to emissions?",
+    "👋 Hello, how are you?",
+    "🤝 Thank you for your help!",
+    "❓ What can you help me with?",
+    "🌟 Tell me about yourself",
+    "💬 How's the weather today?"
 ]
 
 QUIZ_QUESTIONS = [
@@ -76,8 +86,86 @@ QUIZ_QUESTIONS = [
 ]
 
 def get_ai_response(user_input):
-    """Generate AI response based on user input"""
+    """Generate AI response using OpenAI GPT with fallback to local knowledge"""
+    
+    # Try OpenAI first
+    try:
+        # Set OpenAI API key from environment or Streamlit secrets
+        api_key = None
+        
+        try:
+            if hasattr(st, 'secrets') and 'openai_api_key' in st.secrets:
+                api_key = st.secrets['openai_api_key']
+        except:
+            pass
+            
+        if not api_key:
+            api_key = os.getenv('OPENAI_API_KEY')
+            
+        if not api_key or api_key == "your-openai-api-key-here":
+            # Fallback to local knowledge if no valid API key
+            return get_local_response(user_input)
+            
+        openai.api_key = api_key
+        
+        prompt = f"""
+You are Climate AI, a friendly and knowledgeable assistant specialized in climate topics like carbon emissions, renewable energy, sustainability, and environmental protection. You should:
+
+1. Always greet users warmly and respond conversationally like a human
+2. Handle small talk naturally but gently guide back to climate topics
+3. Provide accurate, actionable climate information with specific data when possible
+4. Be encouraging about climate action and SDG 13 goals
+5. Keep responses concise (under 150 words) but informative
+
+User: {user_input}
+Climate AI:"""
+        
+        # Create OpenAI client
+        client = openai.OpenAI(api_key=api_key)
+        
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are Climate AI, a friendly climate expert focused on sustainability and environmental action. Always respond conversationally and help with climate topics, but also handle general questions politely while guiding back to climate topics."},
+                {"role": "user", "content": user_input}
+            ],
+            max_tokens=150,
+            temperature=0.7
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as e:
+        # Silently fallback to local knowledge base
+        return get_local_response(user_input)
+
+def get_local_response(user_input):
+    """Enhanced local response system"""
     user_input_lower = user_input.lower()
+    
+    # Handle greetings
+    greetings = ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening']
+    if any(greeting in user_input_lower for greeting in greetings):
+        return "Hello! 👋 I'm Climate AI, your friendly guide to climate action and sustainability. How can I help you make a positive environmental impact today?"
+    
+    # Handle thanks
+    thanks = ['thank', 'thanks', 'appreciate']
+    if any(thank in user_input_lower for thank in thanks):
+        return "You're very welcome! 🌱 I'm here to help you on your climate action journey. Every small step towards sustainability makes a difference!"
+    
+    # Handle recommendations/suggestions
+    recommend_keywords = ['recommend', 'suggest', 'advice', 'tips', 'what else', 'more ideas']
+    if any(keyword in user_input_lower for keyword in recommend_keywords):
+        recommendations = [
+            "Here are my top climate action recommendations: 1) Switch to renewable energy ⚡, 2) Use public transport/bike 🚌, 3) Reduce meat consumption 🌱, 4) Energy-efficient appliances 💡, 5) Support sustainable brands 🌍. Which interests you most?",
+            "I recommend starting with these impactful changes: LED bulbs (75% energy savings), smart thermostats, local/seasonal food, reusable items, and advocating for climate policies. What area would you like to focus on?",
+            "Great climate actions to try: Calculate your carbon footprint 📊, join environmental groups 🌳, vote for climate-conscious leaders 🗳️, reduce waste ♾️, and educate others about climate change. Need details on any of these?"
+        ]
+        return random.choice(recommendations)
+    
+    # Handle specific global warming question
+    if 'global warming' in user_input_lower:
+        return "Global warming refers to the long-term increase in Earth's average surface temperature due to human activities. Since the late 1800s, global temperatures have risen by about 1.1°C (2°F). Main causes include burning fossil fuels (coal, oil, gas), deforestation, and industrial processes that release greenhouse gases like CO₂, methane, and nitrous oxide into the atmosphere."
     
     # Check for specific topics
     for topic, response in CLIMATE_RESPONSES.items():
@@ -85,24 +173,68 @@ def get_ai_response(user_input):
             return response
     
     # General climate keywords
-    climate_keywords = ['climate', 'carbon', 'emission', 'greenhouse', 'sustainability', 'renewable', 'environment', 'global warming', 'pollution']
+    climate_keywords = ['climate', 'carbon', 'emission', 'greenhouse', 'sustainability', 'renewable', 'environment', 'warming', 'pollution']
     
     if any(keyword in user_input_lower for keyword in climate_keywords):
-        general_responses = [
-            "Climate action is crucial for our planet's future. Focus on reducing energy consumption, using sustainable transport, and supporting renewable energy initiatives.",
-            "Every small action counts! Consider switching to renewable energy, reducing meat consumption, and using public transportation to lower your carbon footprint.",
-            "The key to fighting climate change is collective action. Start with personal changes and advocate for policy reforms in your community.",
-            "Sustainable living involves conscious choices: energy-efficient appliances, local food, minimal waste, and supporting eco-friendly businesses."
+        responses = [
+            "Great question! Climate action is crucial for our planet's future. Focus on reducing energy consumption, using sustainable transport, and supporting renewable energy initiatives. What specific area interests you most?",
+            "I'm glad you're interested in climate topics! Every small action counts - from switching to renewable energy to reducing meat consumption. How can I help you take your next green step?",
+            "Climate change requires collective action, and you're part of the solution! Start with personal changes and advocate for policy reforms in your community. What would you like to know more about?"
         ]
-        return random.choice(general_responses)
+        return random.choice(responses)
     
-    return "I specialize in climate and environmental topics. Please ask me about carbon emissions, renewable energy, sustainability, or climate change!"
+    # Handle general conversation
+    general_keywords = ['how are you', 'what can you do', 'help', 'about', 'yourself']
+    if any(keyword in user_input_lower for keyword in general_keywords):
+        return "I'm doing great, thanks for asking! 🌍 I'm here to help you learn about climate action, calculate carbon footprints, discover renewable energy solutions, and find practical ways to live more sustainably. What climate topic interests you?"
+    
+    return "I specialize in climate and environmental topics! I can help with carbon emissions, renewable energy, sustainability tips, and climate action strategies. What would you like to explore? 🌱"
+
+# Check API key status
+api_key_found = False
+try:
+    if hasattr(st, 'secrets') and 'openai_api_key' in st.secrets:
+        if st.secrets['openai_api_key'] and st.secrets['openai_api_key'] != "your-openai-api-key-here":
+            api_key_found = True
+            st.session_state.api_status = 'enabled'
+except:
+    pass
+
+if not api_key_found:
+    st.session_state.api_status = 'local'
+
+# API Configuration Section
+with st.expander("⚙️ AI Configuration Status", expanded=False):
+    if api_key_found:
+        st.success("✅ OpenAI API Key detected in secrets.toml!")
+        st.info("Your Climate AI is enhanced with GPT conversational abilities.")
+    else:
+        st.warning("⚠️ OpenAI API Key not found in secrets.toml")
+        st.info("Using local knowledge base (still fully functional!)")
+        
+    # Manual API key input as backup
+    manual_key = st.text_input("Manual API Key (optional):", type="password", help="Override with manual API key")
+    if manual_key:
+        os.environ['OPENAI_API_KEY'] = manual_key
+        st.success("✅ Manual OpenAI integration enabled!")
+        st.session_state.api_status = 'enabled'
 
 # Page header
 st.markdown("""
 <div style="background: linear-gradient(135deg, #00c851, #007e33); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
     <h1 style="color: white; text-align: center; margin: 0;">🤖 Climate AI Assistant</h1>
     <p style="color: white; text-align: center; margin: 5px 0 0 0;">Your intelligent guide to climate action and sustainability</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Status indicator
+status_color = "#4CAF50" if st.session_state.api_status == 'enabled' else "#2196F3"
+status_text = "OpenAI Enhanced" if st.session_state.api_status == 'enabled' else "Local Knowledge Base"
+st.markdown(f"""
+<div style="text-align: center; margin-bottom: 15px;">
+    <span style="background: {status_color}; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px;">
+        • {status_text}
+    </span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -219,17 +351,22 @@ with col2:
     
     if st.button("📊 Carbon Calculator", use_container_width=True):
         st.session_state.chat_messages.append(("user", "How do I calculate my carbon footprint?"))
-        response = "To calculate your carbon footprint: 1) Track transportation (miles driven, flights taken), 2) Monitor energy use (electricity, heating), 3) Consider diet (meat consumption), 4) Account for consumption (purchases, waste). Use our Carbon Calculator module for detailed analysis!"
+        response = get_ai_response("How do I calculate my carbon footprint?")
         st.session_state.chat_messages.append(("ai", response))
     
     if st.button("🌍 Global Impact", use_container_width=True):
-        st.session_state.chat_messages.append(("user", "What's the global climate situation?"))
-        response = "Current global situation: CO₂ levels at 421 ppm (highest in 3M years), global temperature +1.1°C since 1880, sea level rising 3.3mm/year. We need 45% emission reduction by 2030 to limit warming to 1.5°C. Every fraction of a degree matters!"
+        st.session_state.chat_messages.append(("user", "What's the current global climate situation?"))
+        response = get_ai_response("What's the current global climate situation?")
         st.session_state.chat_messages.append(("ai", response))
     
     if st.button("💡 Sustainability Tips", use_container_width=True):
         st.session_state.chat_messages.append(("user", "Give me practical sustainability tips"))
-        response = "Top sustainability tips: 1) Switch to LED bulbs (75% energy savings), 2) Use public transport/bike, 3) Eat less meat (reduce by 50% = 0.8 tons CO₂/year), 4) Unplug devices when not in use, 5) Buy local/seasonal food, 6) Use reusable bags/bottles, 7) Support renewable energy, 8) Reduce, reuse, recycle!"
+        response = get_ai_response("Give me practical sustainability tips")
+        st.session_state.chat_messages.append(("ai", response))
+    
+    if st.button("👋 Say Hello", use_container_width=True):
+        st.session_state.chat_messages.append(("user", "Hello!"))
+        response = get_ai_response("Hello!")
         st.session_state.chat_messages.append(("ai", response))
 
 # Footer
@@ -238,5 +375,6 @@ st.markdown("""
 <div style="text-align: center; color: #666; padding: 20px;">
     <p>🌱 <strong>Climate AI Assistant</strong> - Supporting SDG 13: Climate Action</p>
     <p>💡 Ask questions • 🧠 Take quizzes • 📊 Learn facts • 🌍 Take action</p>
+    <p style="font-size: 12px; margin-top: 10px;">Powered by OpenAI GPT + Local Knowledge Base</p>
 </div>
 """, unsafe_allow_html=True)
