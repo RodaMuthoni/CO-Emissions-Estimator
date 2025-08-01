@@ -119,22 +119,10 @@ st.markdown("""
     opacity: 0.8;
 }
 </style>
-<div class="floating-chat-btn" id="chatBtn">
+<div class="floating-chat-btn" onclick="setTimeout(function() { var radios = document.querySelectorAll('input[type=\"radio\"]'); for (var i = 0; i < radios.length; i++) { if (radios[i].value === '🤖 Climate AI Chat') { radios[i].checked = true; radios[i].dispatchEvent(new Event('change', { bubbles: true })); break; } } }, 100);">
     <span class="chat-icon">🤖</span>
     <span class="chat-text">Chat Me</span>
 </div>
-<script>
-document.getElementById('chatBtn').addEventListener('click', function() {
-    // Find and click the Climate AI Chat radio button
-    const radios = document.querySelectorAll('input[type="radio"]');
-    for (let radio of radios) {
-        if (radio.value === '🤖 Climate AI Chat') {
-            radio.click();
-            break;
-        }
-    }
-});
-</script>
 """, unsafe_allow_html=True)
 
 
